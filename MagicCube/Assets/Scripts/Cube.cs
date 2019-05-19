@@ -23,6 +23,9 @@ public class Cube : MonoBehaviour
     Vector3 vecms;
     Vector3 vecme;
     bool done = false;
+    RotateInfo rotateInfo;
+    bool isRotate = false;
+    float rotateDegree = 0;
 
     void Start()
     {
@@ -52,6 +55,26 @@ public class Cube : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetMouseButtonUp(0))
+        {
+            done = false;
+        }
+
+        if (isRotate)
+        {
+            if ((rotateDegree+3.0f) > 90)
+            {
+                rotate(rotateInfo, 90 - rotateDegree);
+                rotateDegree = 0;
+                isRotate = false;
+                return;
+            }
+
+            rotateDegree += 3.0f;
+            rotate(rotateInfo, 3.0f);
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             pickedNodes = null;
@@ -75,11 +98,6 @@ public class Cube : MonoBehaviour
                     }
                 }
             }
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            done = false;
         }
 
         if (Input.GetMouseButton(0))
@@ -109,12 +127,12 @@ public class Cube : MonoBehaviour
                         }
                     }
 
-                    RotateInfo rotateInfo = rotationinfo();
-                    rotate(rotateInfo);
+                    rotateInfo = rotationinfo();
 
                     if (rotateInfo.axis != "")
                     {
                         done = true;
+                        isRotate = true;
                     }
                 }
             }
@@ -255,11 +273,11 @@ public class Cube : MonoBehaviour
                 {
                     if (tempos == "y")
                     {
-                        temp = (-1) * vecs.z * vece.y;
+                        temp = (-1) * vecs.x * vece.y;
                     }
                     else
                     {
-                        temp = (-1) * vecs.z * vece.z;
+                        temp = (-1) * vecs.x * vece.z;
                     }
                 }
 
@@ -356,7 +374,7 @@ public class Cube : MonoBehaviour
         return rotateInfo;
     }
 
-    void rotate(RotateInfo rotateInfo)
+    void rotate(RotateInfo rotateInfo, float degree)
     {
         if (rotateInfo.axis != "")
         {
@@ -366,7 +384,7 @@ public class Cube : MonoBehaviour
                 {
                     if (Mathf.Abs(matx[i].transform.localPosition.x - 100 * rotateInfo.a) < 1)
                     {
-                        matx[i].RotateAround(cubeParent.transform.localPosition, Vector3.right * rotateInfo.dir, 90);
+                        matx[i].RotateAround(cubeParent.transform.localPosition, Vector3.right * rotateInfo.dir, degree);
                     }
                 }
             }
@@ -376,7 +394,7 @@ public class Cube : MonoBehaviour
                 {
                     if (Mathf.Abs(matx[i].transform.localPosition.y - 100 * rotateInfo.a) < 1)
                     {
-                        matx[i].RotateAround(cubeParent.transform.localPosition, Vector3.up * rotateInfo.dir, 90);
+                        matx[i].RotateAround(cubeParent.transform.localPosition, Vector3.up * rotateInfo.dir, degree);
                     }
                 }
             }
@@ -386,7 +404,7 @@ public class Cube : MonoBehaviour
                 {
                     if (Mathf.Abs(matx[i].transform.localPosition.z - 100 * rotateInfo.a) < 1)
                     {
-                        matx[i].RotateAround(cubeParent.transform.localPosition, Vector3.forward * rotateInfo.dir, 90);
+                        matx[i].RotateAround(cubeParent.transform.localPosition, Vector3.forward * rotateInfo.dir, degree);
                     }
                 }
             }
@@ -411,16 +429,9 @@ public class Cube : MonoBehaviour
     {
         if (Input.GetMouseButton(1))
         {
-            Vector3 pos = camera.transform.position;
-            Vector3 rot = camera.transform.eulerAngles;
-
             camera.transform.RotateAround(cubeParent.transform.position, Vector3.up, Input.GetAxis("Mouse X") * 10);
             camera.transform.RotateAround(cubeParent.transform.position, Vector3.left, Input.GetAxis("Mouse Y") * 10);
-            float x = camera.transform.eulerAngles.x;
-            float y = camera.transform.eulerAngles.y;
-            
             offset = camera.transform.position - cubeParent.transform.position;
-            camera.transform.position = cubeParent.transform.position + offset;
         }
     }
 }

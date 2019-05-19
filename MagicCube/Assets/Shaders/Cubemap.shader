@@ -4,13 +4,11 @@
 	{
 		_CubeMap("CubeMap", CUBE) = ""{}
 	}
-	
+
 	SubShader 
 	{
 		Pass 
 		{
-			Fog { Mode Off }
-
 			CGPROGRAM
 
 			#pragma vertex vert
@@ -25,22 +23,22 @@
 			struct v2f 
 			{
 				float4 vertex : SV_POSITION;
-				float4 vertexLocal : TEXCOORD1;
+				float4 texCoords : TEXCOORD1;
 			};
 
 			v2f vert (appdata v) 
 			{
 				v2f o;
-				o.vertexLocal = v.vertex;
 				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.texCoords = v.vertex;
 				return o;
 			}
 
 			samplerCUBE _CubeMap;
-			
+
 			fixed4 frag (v2f i) : COLOR0
-		  { 
-				fixed4 col = texCUBE(_CubeMap, normalize(i.vertexLocal.xyz)); 
+			{ 
+				fixed4 col = texCUBE(_CubeMap, i.texCoords.xyz); 
 				return col;
 			}
 
